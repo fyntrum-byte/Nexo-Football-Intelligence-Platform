@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXO · Football Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080d;
+  --surface:#0d0e15;
+  --card:#12131c;
+  --card2:#181926;
+  --border:#1f2133;
+  --border2:#2a2d45;
+  --gold:#e8b84b;
+  --gold2:#f5d07a;
+  --green:#00d48a;
+  --red:#ff3f5e;
+  --blue:#4d8ef5;
+  --purple:#9b6dff;
+  --text:#eeeef5;
+  --text2:#a0a3c4;
+  --text3:#5a5d80;
+  --mono:'DM Mono',monospace;
+  --sans:'Outfit',sans-serif;
+  --display:'Bebas Neue',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:200;
+  background:rgba(7,8,13,0.97);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+}
+.logo{display:flex;align-items:center;gap:14px}
+.logo-mark{
+  width:40px;height:40px;border-radius:8px;
+  background:linear-gradient(135deg,var(--gold),var(--green));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:22px;color:#000;letter-spacing:2px;
+}
+.logo-text{font-family:var(--display);font-size:26px;letter-spacing:0.14em;color:var(--text)}
+.logo-sub{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.18em;margin-top:2px;text-transform:uppercase}
+.status-pill{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(0,212,138,0.08);
+  border:1px solid rgba(0,212,138,0.25);
+  border-radius:20px;padding:6px 16px;
+  font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:0.08em;
+}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* TABS */
+.tabs-wrap{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;
+  display:flex;gap:0;overflow-x:auto;scrollbar-width:none;
+}
+.tabs-wrap::-webkit-scrollbar{display:none}
+.tab{
+  padding:16px 20px;border:none;background:transparent;
+  color:var(--text3);font-family:var(--sans);font-size:11px;font-weight:600;
+  letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:all 0.2s;
+}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* CONTENT */
+.content{display:none;animation:fadeIn 0.3s ease both}
+.content.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.page{max-width:1100px;margin:0 auto;padding:48px 32px 80px}
+
+/* HERO */
+.hero{
+  display:grid;grid-template-columns:1fr auto;gap:32px;align-items:start;
+  margin-bottom:52px;padding-bottom:40px;border-bottom:1px solid var(--border);
+}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;color:var(--text3);text-transform:uppercase;margin-bottom:12px}
+.hero-title{font-family:var(--display);font-size:64px;line-height:0.9;letter-spacing:0.02em;margin-bottom:20px}
+.hero-desc{font-size:15px;color:var(--text2);line-height:1.75;max-width:560px}
+.hero-stats{display:flex;flex-direction:column;gap:14px;min-width:200px}
+.hstat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px}
+.hstat-num{font-family:var(--display);font-size:34px;line-height:1}
+.hstat-label{font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--mono);letter-spacing:0.08em}
+
+/* BLOCKS */
+.block{margin-bottom:48px}
+.block-hdr{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.block-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.block-title{font-family:var(--display);font-size:28px;letter-spacing:0.04em}
+.block-sub{font-size:13px;color:var(--text2);margin-top:2px}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px}
+.card-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px;display:inline-block;padding:3px 10px;border-radius:3px}
+.card h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.card p{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* FEATURE ROW */
+.frow{display:flex;gap:20px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--border)}
+.frow:last-child{border-bottom:none}
+.fnum{width:36px;height:36px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700}
+.fbody h4{font-size:14px;font-weight:700;margin-bottom:6px}
+.fbody p{font-size:13px;color:var(--text2);line-height:1.6}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border2);color:var(--text3)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{background:var(--card2);padding:12px 16px;text-align:left;font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--border2)}
+.tbl td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* PRICING */
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:32px}
+.price-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:28px;position:relative;overflow:hidden}
+.price-card.featured{border-color:var(--gold);background:linear-gradient(135deg,rgba(232,184,75,0.06),var(--card))}
+.price-badge{position:absolute;top:16px;right:16px;background:var(--gold);color:#000;font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 10px;border-radius:3px;letter-spacing:0.08em}
+.price-name{font-family:var(--display);font-size:22px;letter-spacing:0.06em;margin-bottom:4px}
+.price-desc{font-size:12px;color:var(--text3);margin-bottom:20px}
+.price-amount{font-family:var(--display);font-size:44px;line-height:1;color:var(--gold);margin-bottom:4px}
+.price-period{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:20px}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:10px}
+.price-features li{font-size:13px;color:var(--text2);display:flex;gap:10px;align-items:flex-start}
+.price-features li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+
+/* VALOR */
+.valor-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:12px;display:flex;gap:20px;align-items:flex-start}
+.valor-icon{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.valor-body h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.valor-body p{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* SOLIDARITY CALC */
+.calc-box{background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:24px;margin-bottom:20px}
+.calc-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.calc-row:last-child{border-bottom:none}
+.calc-age{font-family:var(--mono);font-size:11px;color:var(--text3)}
+.calc-pct{font-size:12px;color:var(--text2)}
+.calc-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--green)}
+.calc-total{background:rgba(0,212,138,0.08);border:1px solid rgba(0,212,138,0.25);border-radius:8px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+
+/* INGRESO */
+.ingreso{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.ingreso-head{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--border)}
+.ingreso-head h3{font-size:15px;font-weight:700}
+.ingreso-code{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.ingreso-body{padding:20px 24px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:16px}
+.metric{background:var(--card2);border-radius:6px;padding:12px 14px}
+.metric-l{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.metric-v{font-size:15px;font-weight:700}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:40px 0}
+
+/* PILL */
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;font-family:var(--mono)}
+
+/* BIG NUM */
+.bnum{font-family:var(--display);font-size:52px;line-height:1}
+
+/* TIMELINE */
+.tl{position:relative;padding-left:48px}
+.tl::before{content:'';position:absolute;left:18px;top:8px;bottom:8px;width:1px;background:var(--border2)}
+.tl-item{position:relative;margin-bottom:28px}
+.tl-dot{position:absolute;left:-48px;top:2px;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;border:1px solid var(--border2)}
+.tl-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.tl-body{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* COMUNICACION */
+.canal-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:22px 24px;margin-bottom:12px}
+.canal-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.canal-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.canal-title{font-size:15px;font-weight:700}
+.canal-sub{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.canal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.canal-item{background:var(--card2);border-radius:6px;padding:10px 14px}
+.canal-item-l{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;margin-bottom:4px}
+.canal-item-v{font-size:12px;font-weight:600}
+
+/* SLA */
+.sla-row{display:flex;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--border)}
+.sla-row:last-child{border-bottom:none}
+.sla-badge{font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:3px;flex-shrink:0;min-width:80px;text-align:center}
+.sla-desc{font-size:13px;color:var(--text2)}
+.sla-time{font-family:var(--mono);font-size:12px;font-weight:700;margin-left:auto;flex-shrink:0}
+
+@media(max-width:700px){
+  header{padding:0 16px}
+  .tabs-wrap{padding:0 16px}
+  .page{padding:28px 16px 60px}
+  .hero{grid-template-columns:1fr}
+  .hero-title{font-size:44px}
+  .hero-stats{flex-direction:row;flex-wrap:wrap;min-width:auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">N</div>
+    <div>
+      <div class="logo-text">NEXO</div>
+      <div class="logo-sub">Football Intelligence Platform · Ecuador</div>
+    </div>
+  </div>
+  <div class="status-pill"><div class="dot"></div>BUSINESS PLAN 2025</div>
+</header>
+
+<div class="tabs-wrap">
+  <button class="tab active" onclick="show('empresa',this)">00 · La Empresa</button>
+  <button class="tab" onclick="show('problema',this)">01 · El Problema</button>
+  <button class="tab" onclick="show('modelo',this)">02 · El Modelo</button>
+  <button class="tab" onclick="show('metodologia',this)">03 · Metodología</button>
+  <button class="tab" onclick="show('anticorrupcion',this)">04 · Anti-Corrupción</button>
+  <button class="tab" onclick="show('rural',this)">05 · Talento Rural</button>
+  <button class="tab" onclick="show('monetizacion',this)">06 · Monetización</button>
+  <button class="tab" onclick="show('proyeccion',this)">07 · Proyección</button>
+</div>
+
+<!-- ══════════════════════════════════════
+     00 · LA EMPRESA
+══════════════════════════════════════ -->
+<div id="empresa" class="content active">
+<div class="page">
+
+  <div class="hero">
+    <div>
+      <div class="eyebrow">◆ IDENTIDAD CORPORATIVA</div>
+      <div class="hero-title" style="color:var(--gold)">LA<br>EMPRESA</div>
+      <p class="hero-desc">NEXO es la primera plataforma de inteligencia de datos del fútbol formativo latinoamericano. Conectamos clubes, academias, scouts, jugadores y federaciones en un solo ecosistema — garantizando transparencia, trazabilidad y que cada actor reciba lo que le corresponde.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">2025</div><div class="hstat-label">AÑO DE FUNDACIÓN</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">EC</div><div class="hstat-label">SEDE: ECUADOR</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--green)">B2B2C</div><div class="hstat-label">MODELO DE NEGOCIO</div></div>
+    </div>
+  </div>
+
+  <!-- MISIÓN -->
+  <div class="block">
+    <div class="block-hdr">
+      <div class="block-icon" style="background:rgba(232,184,75,0.1);color:var(--gold)">🎯</div>
+      <div><div class="block-title">Misión</div></div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--gold)">
+      <p style="font-size:18px;line-height:1.7;color:var(--text)">Digitalizar y transparentar el ecosistema del fútbol formativo latinoamericano, garantizando que cada club, academia y jugador reciba el reconocimiento económico e institucional que merece por su trabajo de desarrollo de talento.</p>
+    </div>
+  </div>
+
+  <!-- VISIÓN -->
+  <div class="block">
+    <div class="block-hdr">
+      <div class="block-icon" style="background:rgba(0,212,138,0.1);color:var(--green)">🔭</div>
+      <div><div class="block-title">Visión</div></div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--green)">
+      <p style="font-size:18px;line-height:1.7;color:var(--text)">Ser la infraestructura de datos del fútbol formativo de Latinoamérica en 2030 — el sistema que ningún club, federación ni agencia internacional pueda ignorar cuando busca, evalúa o transfiere talento joven.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- VALORES -->
+  <div class="block">
+    <div class="block-hdr">
+      <div class="block-icon" style="background:rgba(77,142,245,0.1);color:var(--blue)">⭐</div>
+      <div><div class="block-title">Valores</div><div class="block-sub">Los principios que guían cada decisión en NEXO</div></div>
+    </div>
+
+    <div class="valor-card">
+      <div class="valor-icon" style="background:rgba(232,184,75,0.1)">📍</div>
+      <div class="valor-body">
+        <h4 style="color:var(--gold)">Trazabilidad</h4>
+        <p>Cada jugador, contrato y transferencia tiene un registro verificable e inmutable. Lo que no está en NEXO, no existe para el mercado internacional.</p>
+      </div>
+    </div>
+    <div class="valor-card">
+      <div class="valor-icon" style="background:rgba(0,212,138,0.1)">🔍</div>
+      <div class="valor-body">
+        <h4 style="color:var(--green)">Transparencia</h4>
+        <p>Eliminamos las asimetrías de información que permiten la corrupción. Familias, clubes y federaciones tienen acceso a los mismos datos en tiempo real.</p>
+      </div>
+    </div>
+    <div class="valor-card">
+      <div class="valor-icon" style="background:rgba(77,142,245,0.1)">🏆</div>
+      <div class="valor-body">
+        <h4 style="color:var(--blue)">Mérito</h4>
+        <p>El talento se mide con datos objetivos, no con relaciones ni intermediarios. El mejor jugador llega al mejor lugar — sin importar de dónde viene.</p>
+      </div>
+    </div>
+    <div class="valor-card">
+      <div class="valor-icon" style="background:rgba(155,109,255,0.1)">🤝</div>
+      <div class="valor-body">
+        <h4 style="color:var(--purple)">Solidaridad</h4>
+        <p>Cada actor del ecosistema recibe lo que le corresponde por ley FIFA — desde el club rural de Esmeraldas hasta el grande de Quito. Nadie debe perder dinero por falta de documentación.</p>
+      </div>
+    </div>
+    <div class="valor-card">
+      <div class="valor-icon" style="background:rgba(255,63,94,0.1)">🌱</div>
+      <div class="valor-body">
+        <h4 style="color:var(--red)">Impacto Social</h4>
+        <p>El jugador de escasos recursos en una provincia rural tiene las mismas oportunidades de ser descubierto que el de una academia privada en Quito. NEXO democratiza el acceso al talento.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- MERCADO OBJETIVO -->
+  <div class="block">
+    <div class="block-hdr">
+      <div class="block-icon" style="background:rgba(232,184,75,0.1);color:var(--gold)">🎯</div>
+      <div><div class="block-title">Mercado Objetivo</div><div class="block-sub">Primario Ecuador · Expansión Latam Año 2–3</div></div>
+    </div>
+
+    <div class="g3" style="margin-bottom:28px">
+      <div class="card card" style="border-top:3px solid var(--gold)">
+        <div class="card-tag" style="background:rgba(232,184,75,0.1);color:var(--gold)">SEGMENTO 1</div>
+        <h3>Clubes Profesionales</h3>
+        <p style="margin-bottom:14px">LigaPro Serie A (16 clubes) y Serie B (14 clubes). Cliente principal pagador con mayor poder adquisitivo y mayor urgencia por solidaridad FIFA.</p>
+        <div style="background:var(--card2);border-radius:6px;padding:12px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px">POTENCIAL MENSUAL</div>
+          <div style="font-family:var(--display);font-size:28px;color:var(--gold)">$24K–$75K</div>
+          <div style="font-size:11px;color:var(--text3)">Con 30 clubes activos</div>
+        </div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--green)">
+        <div class="card-tag" style="background:rgba(0,212,138,0.1);color:var(--green)">SEGMENTO 2</div>
+        <h3>Academias y Escuelas</h3>
+        <p style="margin-bottom:14px">200+ academias privadas en Ecuador sin sistema de gestión digital. Motor de crecimiento de la red de jugadores.</p>
+        <div style="background:var(--card2);border-radius:6px;padding:12px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px">POTENCIAL MENSUAL</div>
+          <div style="font-family:var(--display);font-size:28px;color:var(--green)">$16K–$40K</div>
+          <div style="font-size:11px;color:var(--text3)">Con 200 academias activas</div>
+        </div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--blue)">
+        <div class="card-tag" style="background:rgba(77,142,245,0.1);color:var(--blue)">SEGMENTO 3</div>
+        <h3>Scouts e Intermediarios</h3>
+        <p style="margin-bottom:14px">Scouts locales e internacionales que necesitan acceso verificado al talento ecuatoriano. Creciente con la reputación internacional del fútbol ecuatoriano.</p>
+        <div style="background:var(--card2);border-radius:6px;padding:12px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px">POTENCIAL MENSUAL</div>
+          <div style="font-family:var(--display);font-size:28px;color:var(--blue)">$7.5K–$25K</div>
+          <div style="font-size:11px;color:var(--text3)">Con 50+ scouts activos</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--card2)">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;margin-bottom:18px">EXPANSIÓN LATINOAMÉRICA · AÑO 2–3</p>
+      <table class="tbl">
+        <tr><th>PAÍS</th><th>CLUBES PROF.</th><th>ACADEMIAS EST.</th><th>PRIORIDAD</th></tr>
+        <tr><td><strong>🇨🇴 Colombia</strong></td><td>20 (Primera Div.)</td><td>400+</td><td><span class="pill" style="background:rgba(232,184,75,0.1);color:var(--gold);border:1px solid rgba(232,184,75,0.3)">AÑO 2</span></td></tr>
+        <tr><td><strong>🇵🇪 Perú</strong></td><td>16 (Liga 1)</td><td>300+</td><td><span class="pill" style="background:rgba(232,184,75,0.1);color:var(--gold);border:1px solid rgba(232,184,75,0.3)">AÑO 2</span></td></tr>
+        <tr><td><strong>🇧🇴 Bolivia</strong></td><td>14 (Div. Prof.)</td><td>200+</td><td><span class="pill" style="background:rgba(0,212,138,0.1);color:var(--green);border:1px solid rgba(0,212,138,0.3)">AÑO 3</span></td></tr>
+        <tr><td><strong>🇵🇾 Paraguay</strong></td><td>12 (Div. Prof.)</td><td>150+</td><td><span class="pill" style="background:rgba(0,212,138,0.1);color:var(--green);border:1px solid rgba(0,212,138,0.3)">AÑO 3</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PRECIOS DE VENTA -->
+  <div class="block">
+    <div class="block-hdr">
+      <div class="block-icon" style="background:rgba(0,212,138,0.1);color:var(--green)">💰</div>
+      <div><div class="block-title">Precios de Venta</div><div class="block-sub">Planes diseñados para cada actor del ecosistema</div></div>
+    </div>
+
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-name" style="color:var(--text2)">ACADEMIA</div>
+        <div class="price-desc">Para escuelas y academias independientes</div>
+        <div class="price-amount">$80</div>
+        <div class="price-period">— $200 / MES</div>
+        <ul class="price-features">
+          <li>Registro ilimitado de jugadores</li>
+          <li>Evaluaciones básicas digitalizadas</li>
+          <li>Perfil exportable por jugador</li>
+          <li>Visibilidad en marketplace</li>
+          <li>Notificaciones a familias</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">RECOMENDADO</div>
+        <div class="price-name" style="color:var(--gold)">CLUB PRO</div>
+        <div class="price-desc">Para clubes LigaPro Serie A y B</div>
+        <div class="price-amount">$800</div>
+        <div class="price-period">— $2,500 / MES</div>
+        <ul class="price-features">
+          <li>Todo lo del plan Academia</li>
+          <li>Dashboard de Solidaridad FIFA</li>
+          <li>Generación automática de documentos FIFA</li>
+          <li>Módulo anti-corrupción completo</li>
+          <li>Acceso al marketplace de scouts</li>
+          <li>Reportes de cumplimiento FEF</li>
+          <li>Soporte prioritario 24/7</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <div class="price-name" style="color:var(--blue)">SCOUT</div>
+        <div class="price-desc">Para scouts y agencias de representación</div>
+        <div class="price-amount">$150</div>
+        <div class="price-period">— $500 / MES</div>
+        <ul class="price-features">
+          <li>Acceso completo al marketplace</li>
+          <li>Filtros avanzados por posición, edad, score</li>
+          <li>Alertas de jugadores target</li>
+          <li>Contacto directo con clubes</li>
+          <li>Informes de scouting exportables</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <div class="price-name" style="color:var(--purple)">INSTITUCIONAL</div>
+        <div class="price-desc">FEF, Ministerio del Deporte, Federaciones</div>
+        <div class="price-amount">$2K</div>
+        <div class="price-period">— $8,000 / MES</div>
+        <ul class="price-features">
+          <li>Panel de auditoría nacional</li>
+          <li>Datos agregados del ecosistema</li>
+          <li>Reportes de compliance FIFA</li>
+          <li>Mapa nacional de talento</li>
+          <li>API de integración</li>
+          <li>Gestor de cuenta dedicado</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SOLIDARIDAD FIFA PRICING -->
+    <div class="card" style="border:1px solid rgba(0,212,138,0.3);background:rgba(0,212,138,0.04)">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:0.12em;margin-bottom:16px">SERVICIO ESPECIAL · GESTIÓN DE SOLIDARIDAD FIFA</p>
+      <div class="g2">
+        <div>
+          <h3 style="font-size:18px;margin-bottom:10px">Sin costo inicial. Solo pagás si cobrás.</h3>
+          <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px">NEXO gestiona todo el proceso de reclamo de solidaridad FIFA: documentación, coordinación legal, presentación ante FIFA Clearing House y seguimiento. El club no paga nada hasta que el dinero llegue a su cuenta.</p>
+          <div style="display:flex;gap:20px">
+            <div style="text-align:center;background:var(--card2);border-radius:8px;padding:16px 24px">
+              <div style="font-family:var(--display);font-size:36px;color:var(--red)">20%</div>
+              <div style="font-size:11px;color:var(--text3);font-family:var(--mono)">NEXO retiene</div>
+            </div>
+            <div style="text-align:center;background:var(--card2);border-radius:8px;padding:16px 24px">
+              <div style="font-family:var(--display);font-size:36px;color:var(--green)">80%</div>
+              <div style="font-size:11px;color:var(--text3);font-family:var(--mono)">Para el club formador</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:14px;letter-spacing:0.1em">SIMULADOR · TRANSFERENCIA DE $10,000,000</p>
+          <div class="calc-box" style="padding:16px">
+            <div class="calc-row">
+              <span class="calc-age">Pool solidaridad (5%)</span>
+              <span class="calc-val">$500,000</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-age">Si IDV formó años 12–15 (4 × 5%)</span>
+              <span class="calc-val">$100,000</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-age">Si IDV formó años 16–23 (8 × 10%)</span>
+              <span class="calc-val">$400,000</span>
+            </div>
+            <div class="calc-row" style="border-bottom:1px solid var(--border)">
+              <span class="calc-age" style="font-weight:700;color:var(--text)">Total IDV (formación completa)</span>
+              <span class="calc-val" style="font-size:16px">$500,000</span>
+            </div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(0,212,138,0.08);border-radius:6px">
+                <span style="font-size:13px;color:var(--green)">IDV recibe (80%)</span>
+                <span style="font-family:var(--mono);font-weight:700;color:var(--green)">$400,000</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(232,184,75,0.08);border-radius:6px">
+                <span style="font-size:13px;color:var(--gold)">NEXO retiene (20%)</span>
+                <span style="font-family:var(--mono);font-weight:700;color:var(--gold)">$100,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- COMUNICACIÓN Y SERVICIO AL CLIENTE -->
+  <div class="block">
+    <div class="block-hdr">
+      <div class="block-icon" style="background:rgba(155,109,255,0.1);color:var(--purple)">📡</div>
+      <div><div class="block-title">Comunicación y Servicio al Cliente</div><div class="block-sub">Cómo NEXO se relaciona con cada actor del ecosistema</div></div>
+    </div>
+
+    <!-- CANALES -->
+    <div class="canal-card">
+      <div class="canal-head">
+        <div class="canal-icon" style="background:rgba(0,212,138,0.1)">📱</div>
+        <div>
+          <div class="canal-title">Canales de Comunicación por Segmento</div>
+          <div class="canal-sub">Cada actor tiene su canal principal y secundario</div>
+        </div>
+      </div>
+      <table class="tbl">
+        <tr><th>SEGMENTO</th><th>CANAL PRINCIPAL</th><th>CANAL SECUNDARIO</th><th>FRECUENCIA</th></tr>
+        <tr><td><strong>Clubes LigaPro</strong></td><td>Account Manager dedicado</td><td>Email + Dashboard</td><td>Semanal</td></tr>
+        <tr><td><strong>Academias</strong></td><td>WhatsApp Business</td><td>Email + App</td><td>Según necesidad</td></tr>
+        <tr><td><strong>Scouts</strong></td><td>App + Alertas push</td><td>Email</td><td>Tiempo real</td></tr>
+        <tr><td><strong>Familias</strong></td><td>App + Notificaciones push</td><td>WhatsApp</td><td>Automático</td></tr>
+        <tr><td><strong>FEF / Institucional</strong></td><td>Reuniones periódicas</td><td>Portal institucional</td><td>Mensual</td></tr>
+      </table>
+    </div>
+
+    <!-- SLA -->
+    <div class="card" style="margin-bottom:16px">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;margin-bottom:16px">ACUERDOS DE NIVEL DE SERVICIO (SLA)</p>
+      <div class="sla-row">
+        <div class="sla-badge" style="background:rgba(255,63,94,0.1);color:var(--red)">CRÍTICO</div>
+        <div class="sla-desc">Fallo en la plataforma / datos incorrectos de solidaridad FIFA</div>
+        <div class="sla-time" style="color:var(--red)">≤ 2 horas</div>
+      </div>
+      <div class="sla-row">
+        <div class="sla-badge" style="background:rgba(232,184,75,0.1);color:var(--gold)">ALTO</div>
+        <div class="sla-desc">Problema con perfil de jugador / error en evaluación</div>
+        <div class="sla-time" style="color:var(--gold)">≤ 8 horas</div>
+      </div>
+      <div class="sla-row">
+        <div class="sla-badge" style="background:rgba(77,142,245,0.1);color:var(--blue)">MEDIO</div>
+        <div class="sla-desc">Consultas sobre contratos / facturación / acceso</div>
+        <div class="sla-time" style="color:var(--blue)">≤ 24 horas</div>
+      </div>
+      <div class="sla-row">
+        <div class="sla-badge" style="background:rgba(0,212,138,0.1);color:var(--green)">BAJO</div>
+        <div class="sla-desc">Solicitudes de mejora / nuevas funcionalidades</div>
+        <div class="sla-time" style="color:var(--green)">≤ 72 horas</div>
+      </div>
+    </div>
+
+    <!-- ONBOARDING -->
+    <div class="card">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;margin-bottom:18px">PROCESO DE ONBOARDING · CLUBES Y ACADEMIAS</p>
+      <div class="tl">
+        <div class="tl-item">
+          <div class="tl-dot" style="background:rgba(232,184,75,0.1);color:var(--gold);border-color:rgba(232,184,75,0.3)">D1</div>
+          <div class="tl-title">Día 1 — Firma y acceso</div>
+          <div class="tl-body">Firma del contrato digital. Creación de cuenta. Acceso al dashboard. Envío de credenciales al equipo del club.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:rgba(232,184,75,0.1);color:var(--gold);border-color:rgba(232,184,75,0.3)">D3</div>
+          <div class="tl-title">Día 3 — Capacitación inicial</div>
+          <div class="tl-body">Sesión virtual de 2 horas con el equipo técnico del club. Configuración de categorías, evaluadores y estructura de cantera.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:rgba(0,212,138,0.1);color:var(--green);border-color:rgba(0,212,138,0.3)">D7</div>
+          <div class="tl-title">Día 7 — Primera evaluación en vivo</div>
+          <div class="tl-body">Acompañamiento presencial de un metodólogo NEXO en la primera evaluación real de jugadores. Validación del proceso.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:rgba(0,212,138,0.1);color:var(--green);border-color:rgba(0,212,138,0.3)">D30</div>
+          <div class="tl-title">Día 30 — Revisión y optimización</div>
+          <div class="tl-body">Reunión mensual de revisión. Análisis del dashboard de solidaridad. Identificación de jugadores con potencial de transferencia.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PROPUESTA DE VALOR DIFERENCIADA -->
+  <div class="block">
+    <div class="block-hdr">
+      <div class="block-icon" style="background:rgba(232,184,75,0.1);color:var(--gold)">⚡</div>
+      <div><div class="block-title">Por Qué NEXO y No Otro</div><div class="block-sub">Diferenciadores competitivos clave</div></div>
+    </div>
+    <div class="g2">
+      <div class="frow" style="padding:16px 0">
+        <div class="fnum" style="background:rgba(232,184,75,0.1);color:var(--gold)">01</div>
+        <div class="fbody"><h4>Único con módulo de Solidaridad FIFA</h4><p>Ninguna plataforma en Latinoamérica gestiona activamente el reclamo de solidaridad FIFA. Es dinero que existe, que le corresponde a los clubes, y que nadie les está ayudando a cobrar.</p></div>
+      </div>
+      <div class="frow" style="padding:16px 0">
+        <div class="fnum" style="background:rgba(0,212,138,0.1);color:var(--green)">02</div>
+        <div class="fbody"><h4>Aval de Independiente del Valle</h4><p>El club con el modelo formativo más exitoso de Ecuador y uno de los mejores de Sudamérica. Su respaldo valida la plataforma ante cualquier club, federación o agencia internacional.</p></div>
+      </div>
+      <div class="frow" style="padding:16px 0">
+        <div class="fnum" style="background:rgba(77,142,245,0.1);color:var(--blue)">03</div>
+        <div class="fbody"><h4>Offline-first para zonas rurales</h4><p>La única plataforma diseñada para funcionar sin internet. Esencial para descubrir el 70% del talento que vive fuera de las ciudades principales.</p></div>
+      </div>
+      <div class="frow" style="padding:16px 0">
+        <div class="fnum" style="background:rgba(155,109,255,0.1);color:var(--purple)">04</div>
+        <div class="fbody"><h4>Modelo sin riesgo para el cliente</h4><p>La gestión de solidaridad FIFA no tiene costo inicial. El club solo paga cuando cobra. Elimina la barrera de adopción más grande: el miedo a pagar por algo que no saben si funciona.</p></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     01 · EL PROBLEMA
+══════════════════════════════════════ -->
+<div id="problema" class="content">
+<div class="page">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">◆ DIAGNÓSTICO DEL MERCADO</div>
+      <div class="hero-title" style="color:var(--red)">EL<br>PROBLEMA</div>
+      <p class="hero-desc">Ecuador genera talento de clase mundial — Caicedo, Chala, Estrada, Pacho — pero el sistema formativo que los produce opera en el siglo XX. Sin datos, sin trazabilidad, sin memoria institucional. Millones en solidaridad FIFA sin cobrar. Miles de jugadores invisibles.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="bnum" style="color:var(--red)">5%</div><div class="hstat-label">SOLIDARIDAD FIFA NO COBRADA</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--red)">0</div><div class="hstat-label">PLATAFORMAS INTEGRADAS EN EC</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--red)">70%</div><div class="hstat-label">TALENTO RURAL SIN MAPEAR</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-hdr">
+      <div class="block-icon" style="background:rgba(255,63,94,0.1);color:var(--red)">💸</div>
+      <div><div class="block-title">El Mecanismo de Solidaridad FIFA</div><div class="block-sub">Cómo funciona y por qué Ecuador no lo cobra</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:20px">
+      <div class="card" style="border-left:3px solid var(--red)">
+        <div class="card-tag" style="background:rgba(255,63,94,0.1);color:var(--red)">REGLAMENTO FIFA · ANNEXE 5 RSTP</div>
+        <h3>¿Qué es la Solidaridad FIFA?</h3>
+        <p>En toda transferencia internacional de un jugador profesional, el 5% del valor del transfer se distribuye entre todos los clubes que lo formaron entre sus años 12 y 23. Este dinero lo paga el club comprador — no el vendedor.</p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--red)">
+        <div class="card-tag" style="background:rgba(255,63,94,0.1);color:var(--red)">DISTRIBUCIÓN OFICIAL FIFA</div>
+        <h3>¿Cómo se reparte el 5%?</h3>
+        <p style="margin-bottom:14px">El pool se distribuye proporcionalmente según los años que el jugador estuvo en cada club:</p>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px">
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--card2);border-radius:4px">
+            <span style="color:var(--text2)">Años 12–15 (por año)</span><span style="color:var(--gold);font-family:var(--mono)">5% del pool</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--card2);border-radius:4px">
+            <span style="color:var(--text2)">Años 16–23 (por año)</span><span style="color:var(--gold);font-family:var(--mono)">10% del pool</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 10px;background:rgba(232,184,75,0.08);border-radius:4px;border:1px solid rgba(232,184,75,0.2)">
+            <span style="color:var(--gold);font-weight:700">TOTAL</span><span style="color:var(--gold);font-family:var(--mono);font-weight:700">100% del pool</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULADOR -->
+    <div class="card" style="background:var(--card2);margin-bottom:20px">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;margin-bottom:18px">SIMULADOR · TRANSFER DE $10,000,000 · JUGADOR FORMADO COMPLETO EN UN SOLO CLUB (12–23)</p>
+      <div style="overflow-x:auto">
+        <table class="tbl" style="min-width:500px">
+          <tr><th>AÑO DEL JUGADOR</th><th>% DEL POOL</th><th>DEL POOL ($500,000)</th><th>DEL TRANSFER TOTAL</th></tr>
+          <tr><td>Año 12</td><td>5%</td><td style="color:var(--green);font-family:var(--mono)">$25,000</td><td style="color:var(--text3);font-family:var(--mono)">0.25%</td></tr>
+          <tr><td>Año 13</td><td>5%</td><td style="color:var(--green);font-family:var(--mono)">$25,000</td><td style="color:var(--text3);font-family:var(--mono)">0.25%</td></tr>
+          <tr><td>Año 14</td><td>5%</td><td style="color:var(--green);font-family:var(--mono)">$25,000</td><td style="color:var(--text3);font-family:var(--mono)">0.25%</td></tr>
+          <tr><td>Año 15</td><td>5%</td><td style="color:var(--green);font-family:var(--mono)">$25,000</td><td style="color:var(--text3);font-family:var(--mono)">0.25%</td></tr>
+          <tr><td>Año 16</td><td>10%</td><td style="color:var(--green);font-family:var(--mono)">$50,000</td><td style="color:var(--text3);font-family:var(--mono)">0.50%</td></tr>
+          <tr><td>Año 17</td><td>10%</td><td style="color:var(--green);font-family:var(--mono)">$50,000</td><td style="color:var(--text3);font-family:var(--mono)">0.50%</td></tr>
+          <tr><td>Año 18</td><td>10%</td><td style="color:var(--green);font-family:var(--mono)">$50,000</td><td style="color:var(--text3);font-family:var(--mono)">0.50%</td></tr>
+          <tr><td>Año 19</td><td>10%</td><td style="color:var(--green);font-family:var(--mono)">$50,000</td><td style="color:var(--text3);font-family:var(--mono)">0.50%</td></tr>
+          <tr><td>Año 20</td><td>10%</td><td style="color:var(--green);font-family:var(--mono)">$50,000</td><td style="color:var(--text3);font-family:var(--mono)">0.50%</td></tr>
+          <tr><td>Año 21</td><td>10%</td><td style="color:var(--green);font-family:var(--mono)">$50,000</td><td style="color:var(--text3);font-family:var(--mono)">0.50%</td></tr>
+          <tr><td>Año 22</td><td>10%</td><td style="color:var(--green);font-family:var(--mono)">$50,000</td><td style="color:var(--text3);font-family:var(--mono)">0.50%</td></tr>
+          <tr><td>Año 23</td><td>10%</td><td style="color:var(--green);font-family:var(--mono)">$50,000</td><td style="color:var(--text3);font-family:var(--mono)">0.50%</td></tr>
+          <tr style="background:rgba(0,212,138,0.06)">
+            <td><strong style="color:var(--green)">TOTAL CLUB FORMADOR</strong></td>
+            <td><strong style="color:var(--green)">100%</strong></td>
+            <td><strong style="color:var(--green);font-family:var(--mono)">$500,000</strong></td>
+            <td><strong style="color:var(--green);font-family:var(--mono)">5.00%</strong></td>
+          </tr>
+        </table>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+        <div style="background:rgba(0,212,138,0.08);border:1px solid rgba(0,212,138,0.25);border-radius:8px;padding:14px;text-align:center">
+          <div style="font-family:var(--display);font-size:32px;color:var(--green)">$400,000</div>
+          <div style="font-size:11px;color:var(--text3);font-family:var(--mono)">CLUB RECIBE (80%)</div>
+        </div>
+        <div style="background:rgba(232,184,75,0.08);border:1px solid rgba(232,184,75,0.25);border-radius:8px;padding:14px;text-align:center">
+          <div style="font-family:var(--display);font-size:32px;color:var(--gold)">$100,000</div>
+          <div style="font-size:11px;color:var(--text3);font-family:var(--mono)">NEXO RETIENE (20%)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESCALA -->
+    <div class="card">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;margin-bottom:14px">EL PROBLEMA A ESCALA · LO QUE ECUADOR PIERDE</p>
+      <table class="tbl">
+        <tr><th>TRANSFER</th><th>POOL 5%</th><th>CLUB RECIBE (80%)</th><th>NEXO (20%)</th></tr>
+        <tr><td>$10,000,000</td><td>$500,000</td><td style="color:var(--green);font-weight:700">$400,000</td><td style="color:var(--gold)">$100,000</td></tr>
+        <tr><td>$20,000,000</td><td>$1,000,000</td><td style="color:var(--green);font-weight:700">$800,000</td><td style="color:var(--gold)">$200,000</td></tr>
+        <tr><td>$50,000,000</td><td>$2,500,000</td><td style="color:var(--green);font-weight:700">$2,000,000</td><td style="color:var(--gold)">$500,000</td></tr>
+        <tr><td>$100,000,000</td><td>$5,000,000</td><td style="color:var(--green);font-weight:700">$4,000,000</td><td style="color:var(--gold)">$1,000,000</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     02 · EL MODELO
+══════════════════════════════════════ -->
+<div id="modelo" class="content">
+<div class="page">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">◆ ARQUITECTURA DE NEGOCIO</div>
+      <div class="hero-title" style="color:var(--gold)">EL<br>MODELO</div>
+      <p class="hero-desc">NEXO es un ecosistema SaaS B2B2C que conecta a todos los actores del fútbol formativo en una plataforma central. El modelo combina suscripciones recurrentes, comisiones de éxito y licencias de datos. Cada actor que entra crea valor para todos los demás.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">6</div><div class="hstat-label">FUENTES DE INGRESO</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">B2B2C</div><div class="hstat-label">MODELO</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">SaaS</div><div class="hstat-label">ARQUITECTURA</div></div>
+    </div>
+  </div>
+  <div class="block">
+    <div class="block-hdr">
+      <div class="block-icon" style="background:rgba(232,184,75,0.1);color:var(--gold)">🏗️</div>
+      <div><div class="block-title">Los 6 Actores del Ecosistema</div></div>
+    </div>
+    <div class="g2">
+      <div class="card" style="border-top:3px solid var(--gold)">
+        <div class="card-tag" style="background:rgba(232,184,75,0.1);color:var(--gold)">ACTOR B2B · PAGADOR PRINCIPAL</div>
+        <h3>⚽ Clubes LigaPro (Serie A + B)</h3>
+        <p style="margin-bottom:12px">Módulo completo: gestión de cantera, evaluaciones, dashboard solidaridad FIFA, marketplace scouting y reportes FEF.</p>
+        <div class="chips"><span class="chip">$800–$2,500/mes</span><span class="chip">30 clubes target</span><span class="chip">Contrato anual</span></div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--gold)">
+        <div class="card-tag" style="background:rgba(232,184,75,0.1);color:var(--gold)">ACTOR B2B · PAGADOR VOLUMEN</div>
+        <h3>🏫 Academias y Escuelas</h3>
+        <p style="margin-bottom:12px">Plan accesible con registro de jugadores, metodología de evaluación, perfil exportable y visibilidad ante scouts.</p>
+        <div class="chips"><span class="chip">$80–$200/mes</span><span class="chip">200+ academias</span><span class="chip">Pago mensual</span></div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--green)">
+        <div class="card-tag" style="background:rgba(0,212,138,0.1);color:var(--green)">ACTOR B2B · MARKETPLACE</div>
+        <h3>🔍 Scouts y Agentes</h3>
+        <p style="margin-bottom:12px">Acceso al marketplace de talento verificado. Filtros avanzados, alertas automáticas y contacto directo.</p>
+        <div class="chips"><span class="chip">$150–$500/mes</span><span class="chip">Scouts locales e int.</span></div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--green)">
+        <div class="card-tag" style="background:rgba(0,212,138,0.1);color:var(--green)">ACTOR B2C · GRATUITO</div>
+        <h3>👦 Jugadores y Familias</h3>
+        <p style="margin-bottom:12px">Perfil gratuito permanente. Notificaciones de visitas, historial de evaluaciones y guía de derechos FIFA.</p>
+        <div class="chips"><span class="chip">GRATIS siempre</span><span class="chip">Motor de red</span></div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--blue)">
+        <div class="card-tag" style="background:rgba(77,142,245,0.1);color:var(--blue)">ACTOR INSTITUCIONAL</div>
+        <h3>🏛️ FEF / Min. Deporte</h3>
+        <p style="margin-bottom:12px">Licencias de datos agregados, reportes de compliance y herramientas de auditoría del ecosistema nacional.</p>
+        <div class="chips"><span class="chip">$2,000–$8,000/mes</span><span class="chip">Contrato institucional</span></div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--purple)">
+        <div class="card-tag" style="background:rgba(155,109,255,0.1);color:var(--purple)">ACTOR INTERNACIONAL</div>
+        <h3>🌍 Clubes Internacionales</h3>
+        <p style="margin-bottom:12px">Clubes europeos, MLS y sudamericanos pagan por suscripción para descubrir talento ecuatoriano antes de que se inflen los precios.</p>
+        <div class="chips"><span class="chip">$300–$1,000/mes</span><span class="chip">Target Año 2</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     03–07 PESTAÑAS RESUMIDAS
+══════════════════════════════════════ -->
+<div id="metodologia" class="content">
+<div class="page">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">◆ PRODUCTO CENTRAL</div>
+      <div class="hero-title" style="color:var(--green)">METO<br>DOLOGÍA</div>
+      <p class="hero-desc">El NEXO Score™ convierte el talento subjetivo en datos objetivos, comparables y auditables internacionalmente. Es el lenguaje común que le falta al fútbol formativo ecuatoriano.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="bnum" style="color:var(--green)">4</div><div class="hstat-label">MÓDULOS DE EVALUACIÓN</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--green)">0–100</div><div class="hstat-label">NEXO SCORE™</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--green)">U8→U23</div><div class="hstat-label">COBERTURA</div></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card" style="border-top:3px solid var(--green)">
+      <div class="card-tag" style="background:rgba(0,212,138,0.1);color:var(--green)">MÓDULO A · 30%</div>
+      <h3>⚡ Evaluación Técnica</h3>
+      <p>Control de balón, precisión de pase, disparo a portería, conducción. Tests cronometrados con video análisis. Score 0–100 por posición.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green)">
+      <div class="card-tag" style="background:rgba(0,212,138,0.1);color:var(--green)">MÓDULO B · 25%</div>
+      <h3>💪 Evaluación Física</h3>
+      <p>Velocidad 10m/30m, Yo-Yo test, potencia vertical (CMJ), agilidad 5-10-5. Ajustado por edad biológica vs cronológica.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold)">
+      <div class="card-tag" style="background:rgba(232,184,75,0.1);color:var(--gold)">MÓDULO C · 30%</div>
+      <h3>🧠 Evaluación Táctica</h3>
+      <p>Lectura del juego, posicionamiento, toma de decisiones bajo presión. Evaluado por metodólogos con licencia UEFA-B mínima.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue)">
+      <div class="card-tag" style="background:rgba(77,142,245,0.1);color:var(--blue)">MÓDULO D · 15%</div>
+      <h3>🧬 Perfil Psicológico</h3>
+      <p>Resiliencia, liderazgo, capacidad de aprendizaje, mentalidad competitiva. Adaptado del modelo CD-RISC para fútbol base.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="anticorrupcion" class="content">
+<div class="page">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">◆ TRANSPARENCIA COMO VENTAJA</div>
+      <div class="hero-title" style="color:var(--gold)">ANTI<br>CORRUPCIÓN</div>
+      <p class="hero-desc">NEXO hace que la transparencia sea más rentable que la corrupción. Trazabilidad total de contratos, contactos y transferencias — protegiendo jugadores, familias y clubes formadores.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">100%</div><div class="hstat-label">TRAZABILIDAD</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">6</div><div class="hstat-label">MÓDULOS DE PROTECCIÓN</div></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card" style="border-left:3px solid var(--gold)"><div class="card-tag" style="background:rgba(232,184,75,0.1);color:var(--gold)">F1</div><h3>KYC de todos los actores</h3><p>Verificación de identidad, licencia FIFA/FEF e historial de sanciones antes de operar. Sin verificación, sin acceso a menores.</p></div>
+    <div class="card" style="border-left:3px solid var(--gold)"><div class="card-tag" style="background:rgba(232,184,75,0.1);color:var(--gold)">F2</div><h3>Trazabilidad de contactos</h3><p>Cada acceso al perfil de un jugador notifica a la familia en tiempo real. Historial inmutable y auditable.</p></div>
+    <div class="card" style="border-left:3px solid var(--gold)"><div class="card-tag" style="background:rgba(232,184,75,0.1);color:var(--gold)">F3</div><h3>Contratos con timestamp legal</h3><p>Firma digital y timestamp notarial. Detección automática de contratos dobles o conflictos de derechos.</p></div>
+    <div class="card" style="border-left:3px solid var(--gold)"><div class="card-tag" style="background:rgba(232,184,75,0.1);color:var(--gold)">F4</div><h3>Dashboard Solidaridad FIFA</h3><p>Cálculo automático del % correspondiente a cada club. Alertas de transferencias. Documentación lista para FIFA.</p></div>
+    <div class="card" style="border-left:3px solid var(--gold)"><div class="card-tag" style="background:rgba(232,184,75,0.1);color:var(--gold)">F5</div><h3>Panel de derechos para familias</h3><p>Guía legal interactiva, revisión de contratos y canal de denuncia anónima ante la FEF.</p></div>
+    <div class="card" style="border-left:3px solid var(--gold)"><div class="card-tag" style="background:rgba(232,184,75,0.1);color:var(--gold)">F6</div><h3>Detección de anomalías</h3><p>Alertas automáticas ante patrones inusuales: múltiples contactos, agentes sin licencia, cambios repentinos en derechos.</p></div>
+  </div>
+</div>
+</div>
+
+<div id="rural" class="content">
+<div class="page">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">◆ IMPACTO SOCIAL + NEGOCIO</div>
+      <div class="hero-title" style="color:var(--green)">TALENTO<br>RURAL</div>
+      <p class="hero-desc">El 70% del talento futbolístico de Ecuador vive fuera de Quito y Guayaquil. NEXO construye la primera infraestructura de descubrimiento de talento rural — y convierte esa misión social en un modelo de negocio rentable.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="bnum" style="color:var(--green)">24</div><div class="hstat-label">PROVINCIAS A MAPEAR</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--green)">$0</div><div class="hstat-label">COSTO PARA EL JUGADOR</div></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card" style="border-left:3px solid var(--green)"><div class="card-tag" style="background:rgba(0,212,138,0.1);color:var(--green)">S1</div><h3>App Offline-First</h3><p>Funciona sin internet. Evaluaciones completas, fotos y video almacenados localmente. Sync automático cuando hay señal.</p></div>
+    <div class="card" style="border-left:3px solid var(--green)"><div class="card-tag" style="background:rgba(0,212,138,0.1);color:var(--green)">S2</div><h3>Evaluadores Itinerantes</h3><p>Metodólogos certificados que viajan circuitos provinciales. Financiado por el Fondo de Responsabilidad Formativa de los clubes LigaPro.</p></div>
+    <div class="card" style="border-left:3px solid var(--green)"><div class="card-tag" style="background:rgba(0,212,138,0.1);color:var(--green)">S3</div><h3>Pruebas Masivas Provinciales</h3><p>Eventos de 1 día, entrada gratuita, 200–500 jugadores por evento. Financiados por sponsors deportivos (Nike, Adidas, Puma).</p></div>
+    <div class="card" style="border-left:3px solid var(--green)"><div class="card-tag" style="background:rgba(0,212,138,0.1);color:var(--green)">S4</div><h3>Perfil Gratuito Universal</h3><p>Todo jugador ecuatoriano puede tener su perfil NEXO gratis. La barrera la pagan clubes y academias, no las familias.</p></div>
+    <div class="card" style="border-left:3px solid var(--green)"><div class="card-tag" style="background:rgba(0,212,138,0.1);color:var(--green)">S5</div><h3>Alianzas Municipales</h3><p>Convenios con los 221 municipios del Ecuador para usar instalaciones deportivas como puntos de evaluación sin costo.</p></div>
+    <div class="card" style="background:var(--card2)">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:14px">FINANCIAMIENTO RURAL</p>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div><div style="font-family:var(--display);font-size:28px;color:var(--green)">$3K–6K/mes</div><div style="font-size:11px;color:var(--text2)">Fondo Responsabilidad Formativa (30 clubes)</div></div>
+        <div><div style="font-family:var(--display);font-size:28px;color:var(--gold)">$2K–8K/evento</div><div style="font-size:11px;color:var(--text2)">Sponsors por evento provincial</div></div>
+        <div><div style="font-family:var(--display);font-size:28px;color:var(--blue)">$24K–60K/año</div><div style="font-size:11px;color:var(--text2)">Licencia Min. del Deporte</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="monetizacion" class="content">
+<div class="page">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">◆ MODELO DE INGRESOS</div>
+      <div class="hero-title" style="color:var(--gold)">MONETI<br>ZACIÓN</div>
+      <p class="hero-desc">6 fuentes de ingreso diferenciadas: recurrente predecible (SaaS), transaccional variable (comisiones FIFA) y licencias institucionales. El modelo no depende de ninguna fuente única.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">6</div><div class="hstat-label">FUENTES DE INGRESO</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">$90K</div><div class="hstat-label">MRR POTENCIAL AÑO 2</div></div>
+    </div>
+  </div>
+  <div class="ingreso" style="border-left:4px solid var(--gold)">
+    <div class="ingreso-head"><div><div class="ingreso-code">F1 · RECURRENTE</div><div>SaaS Clubes LigaPro</div></div><span class="pill" style="background:rgba(232,184,75,0.1);color:var(--gold);border:1px solid rgba(232,184,75,0.3)">PRIORITARIO</span></div>
+    <div class="ingreso-body"><div class="metrics"><div class="metric"><div class="metric-l">Precio/mes</div><div class="metric-v">$800–$2,500</div></div><div class="metric"><div class="metric-l">Mercado EC</div><div class="metric-v">30 clubes</div></div><div class="metric"><div class="metric-l">MRR potencial</div><div class="metric-v" style="color:var(--gold)">$24K–$75K</div></div><div class="metric"><div class="metric-l">Contrato</div><div class="metric-v">Anual prepago</div></div></div></div>
+  </div>
+  <div class="ingreso" style="border-left:4px solid var(--green)">
+    <div class="ingreso-head"><div><div class="ingreso-code">F2 · RECURRENTE</div><div>SaaS Academias</div></div><span class="pill" style="background:rgba(0,212,138,0.1);color:var(--green);border:1px solid rgba(0,212,138,0.3)">VOLUMEN</span></div>
+    <div class="ingreso-body"><div class="metrics"><div class="metric"><div class="metric-l">Precio/mes</div><div class="metric-v">$80–$200</div></div><div class="metric"><div class="metric-l">Mercado EC</div><div class="metric-v">200+ academias</div></div><div class="metric"><div class="metric-l">MRR potencial</div><div class="metric-v" style="color:var(--green)">$16K–$40K</div></div><div class="metric"><div class="metric-l">Contrato</div><div class="metric-v">Mensual</div></div></div></div>
+  </div>
+  <div class="ingreso" style="border-left:4px solid var(--red)">
+    <div class="ingreso-head"><div><div class="ingreso-code">F3 · COMISIÓN DE ÉXITO</div><div>Solidaridad FIFA · 20% NEXO / 80% Club</div></div><span class="pill" style="background:rgba(255,63,94,0.1);color:var(--red);border:1px solid rgba(255,63,94,0.3)">ALTO IMPACTO</span></div>
+    <div class="ingreso-body"><div class="metrics"><div class="metric"><div class="metric-l">Comisión NEXO</div><div class="metric-v">20%</div></div><div class="metric"><div class="metric-l">Para el club</div><div class="metric-v">80%</div></div><div class="metric"><div class="metric-l">Transfer $10M</div><div class="metric-v" style="color:var(--red)">$100K para NEXO</div></div><div class="metric"><div class="metric-l">Riesgo</div><div class="metric-v">Solo de éxito</div></div></div></div>
+  </div>
+  <div class="ingreso" style="border-left:4px solid var(--blue)">
+    <div class="ingreso-head"><div><div class="ingreso-code">F4 · RECURRENTE</div><div>Marketplace de Scouts</div></div></div>
+    <div class="ingreso-body"><div class="metrics"><div class="metric"><div class="metric-l">Precio/mes</div><div class="metric-v">$150–$500</div></div><div class="metric"><div class="metric-l">Target scouts</div><div class="metric-v">50+ Año 1</div></div><div class="metric"><div class="metric-l">MRR potencial</div><div class="metric-v" style="color:var(--blue)">$7.5K–$25K</div></div></div></div>
+  </div>
+  <div class="ingreso" style="border-left:4px solid var(--purple)">
+    <div class="ingreso-head"><div><div class="ingreso-code">F5 · INSTITUCIONAL</div><div>Licencias de Datos · FEF / Gobierno</div></div></div>
+    <div class="ingreso-body"><div class="metrics"><div class="metric"><div class="metric-l">FEF</div><div class="metric-v">$2K–8K/mes</div></div><div class="metric"><div class="metric-l">Min. Deporte</div><div class="metric-v">$24K–60K/año</div></div></div></div>
+  </div>
+  <div class="ingreso" style="border-left:4px solid var(--green)">
+    <div class="ingreso-head"><div><div class="ingreso-code">F6 · EVENTOS</div><div>Pruebas Masivas con Sponsors</div></div></div>
+    <div class="ingreso-body"><div class="metrics"><div class="metric"><div class="metric-l">Por evento</div><div class="metric-v">$2K–8K</div></div><div class="metric"><div class="metric-l">Eventos/año</div><div class="metric-v">12–24</div></div><div class="metric"><div class="metric-l">Revenue anual</div><div class="metric-v" style="color:var(--green)">$24K–$192K</div></div></div></div>
+  </div>
+</div>
+</div>
+
+<div id="proyeccion" class="content">
+<div class="page">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">◆ ROADMAP FINANCIERO</div>
+      <div class="hero-title" style="color:var(--green)">PROYEC<br>CIÓN</div>
+      <p class="hero-desc">Ecuador como caso de éxito en 18 meses. Expansión Colombia y Perú en Año 2. Plataforma regional en Año 3. Path a $2.4M ARR con 60%+ margen bruto.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">$180K</div><div class="hstat-label">ARR AÑO 1</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--gold)">$780K</div><div class="hstat-label">ARR AÑO 2</div></div>
+      <div class="hstat"><div class="bnum" style="color:var(--green)">$2.4M</div><div class="hstat-label">ARR AÑO 3</div></div>
+    </div>
+  </div>
+  <div class="block">
+    <div class="block-hdr"><div class="block-icon" style="background:rgba(0,212,138,0.1);color:var(--green)">📈</div><div><div class="block-title">Revenue por Fuente · 3 Años</div></div></div>
+    <div style="overflow-x:auto">
+      <table class="tbl" style="min-width:500px">
+        <tr><th>FUENTE</th><th>AÑO 1</th><th>AÑO 2</th><th>AÑO 3</th></tr>
+        <tr><td><strong>F1 · Clubes LigaPro</strong></td><td>$48,000</td><td>$150,000</td><td>$300,000</td></tr>
+        <tr><td><strong>F2 · Academias</strong></td><td>$24,000</td><td>$96,000</td><td>$240,000</td></tr>
+        <tr><td><strong>F3 · Solidaridad FIFA</strong></td><td>$30,000</td><td>$200,000</td><td>$800,000</td></tr>
+        <tr><td><strong>F4 · Scouts / Marketplace</strong></td><td>$18,000</td><td>$90,000</td><td>$360,000</td></tr>
+        <tr><td><strong>F5 · Datos / Institucional</strong></td><td>$36,000</td><td>$96,000</td><td>$360,000</td></tr>
+        <tr><td><strong>F6 · Eventos / Sponsors</strong></td><td>$24,000</td><td>$148,000</td><td>$340,000</td></tr>
+        <tr style="background:rgba(0,212,138,0.06)"><td><strong style="color:var(--green)">TOTAL ARR</strong></td><td><strong style="color:var(--green)">$180,000</strong></td><td><strong style="color:var(--green)">$780,000</strong></td><td><strong style="color:var(--green)">$2,400,000</strong></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="block">
+    <div class="block-hdr"><div class="block-icon" style="background:rgba(232,184,75,0.1);color:var(--gold)">💼</div><div><div class="block-title">Costos Operativos · Año 1</div></div></div>
+    <div class="g2">
+      <table class="tbl">
+        <tr><th>ÁREA</th><th>COSTO/MES</th></tr>
+        <tr><td>Tech (2 devs + CTO)</td><td>$5,500</td></tr>
+        <tr><td>Metodología (3 evaluadores)</td><td>$2,400</td></tr>
+        <tr><td>Comercial (2 vendedores)</td><td>$2,000</td></tr>
+        <tr><td>Legal FIFA (retainer)</td><td>$800</td></tr>
+        <tr><td>Operaciones / Admin</td><td>$1,200</td></tr>
+        <tr><td>Marketing y eventos</td><td>$1,500</td></tr>
+        <tr style="background:rgba(255,63,94,0.06)"><td><strong style="color:var(--red)">TOTAL BURN</strong></td><td><strong style="color:var(--red)">~$13,400/mes</strong></td></tr>
+        <tr style="background:rgba(0,212,138,0.06)"><td><strong style="color:var(--green)">BREAK-EVEN MRR</strong></td><td><strong style="color:var(--green)">~$15,000</strong></td></tr>
+      </table>
+      <div class="card" style="background:var(--card2)">
+        <p style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:14px">COMPENSACIÓN INTERNA</p>
+        <table class="tbl" style="font-size:12px">
+          <tr><th>ROL</th><th>ESQUEMA</th></tr>
+          <tr><td>CEO / Fundadores</td><td>Equity + $1,500–2,500</td></tr>
+          <tr><td>CTO / Dev Lead</td><td>Equity + $2,000–3,500</td></tr>
+          <tr><td>Metodólogos FIFA</td><td>$800 + $30/evaluación</td></tr>
+          <tr><td>Comerciales B2B</td><td>$600 + 8% comisión</td></tr>
+          <tr><td>Abogados FIFA</td><td>20% del éxito cobrado</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
